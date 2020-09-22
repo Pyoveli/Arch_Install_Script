@@ -5,6 +5,10 @@ echo "* Bootloader systemd installation *"
 echo "***********************************"
 
 bootctl install
+
+mkdir /boot/loader
+mkdir /boot/loader/entries
+
 cat <<EOF  > /boot/loader/entries/arch.conf
 title Arch Linux
 linux /vmlinuz-linux
