@@ -13,27 +13,9 @@ echo "-------------------------------------------------"
 timedatectl set-ntp true
 pacman -S --noconfirm pacman-contrib
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-echo "-------------------------------------------------"
-echo "----Please select mirrorlist closest to you------"
-echo "-----'1' - Finland-------------------------------"
-echo "-----'2' - United States-------------------------"
-echo "-------------------------------------------------"
+curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
 
-while true; do
-    read input
 
-# FI Mirrors
-    if  ["$input" = "1"]; then 
-	curl -s "https://www.archlinux.org/mirrorlist/?country=FI&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
-    fi
-
-# US Mirrors
-    if ["$input" = "2"]; then 
-        curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
-    fi
-done
-
-read -n 1 -s -r -p "Press any key to continue"
 
 echo -e "\nInstalling prereqs...\n$HR"
 pacman -S --noconfirm gptfdisk btrfs-progs
@@ -67,7 +49,7 @@ sgdisk -c 2:"ROOT" ${DISK}
 # make filesystems
 echo -e "\nCreating Filesystems...\n$HR"
 
-mkfs.vfat -F32 -n "UEFISYS" "${DISK}1"
+mkfs.vfat -F 32 -n "UEFISYS" "${DISK}1"
 mkfs.ext4 -L "ROOT" "${DISK}2"
 
 # mount target
