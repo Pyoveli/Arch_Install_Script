@@ -13,9 +13,27 @@ echo "-------------------------------------------------"
 timedatectl set-ntp true
 pacman -S --noconfirm pacman-contrib
 mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" | sed -e 's/^#Server/Server/' -e '/^#/d' | rankmirrors -n 5 - > /etc/pacman.d/mirrorlist
+echo "-------------------------------------------------"
+echo "----Please select mirrorlist closest to you------"
+echo "-----'1' - Finland-------------------------------"
+echo "-----'2' - United States-------------------------"
+echo "-------------------------------------------------"
 
+while true; do
+    read input
 
+# FI Mirrors
+    if  ["$input" = "1"]; then 
+	curl -s "https://www.archlinux.org/mirrorlist/?country=FI&protocol=https&use_mirror_status=on" | sed -e 's/>
+    fi
+
+# US Mirrors
+    if ["$input" = "2"]; then 
+        curl -s "https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on" | sed -e 's/>
+    fi
+done
+
+read -n 1 -s -r -p "Press any key to continue"
 
 echo -e "\nInstalling prereqs...\n$HR"
 pacman -S --noconfirm gptfdisk btrfs-progs
